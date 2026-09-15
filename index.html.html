@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sadia Hameed — Flutter & Mobile App Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EAF3FB;
+    --bg-panel:#FFFFFF;
+    --ink:#12233F;
+    --ink-soft:#4A5C7A;
+    --sun:#FF8A3D;
+    --sky:#2F6FED;
+    --teal:#12A996;
+    --line:rgba(18,35,63,0.13);
+    --radius:18px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation:none !important; transition:none !important;}
+  }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{
+    font-family:'Sora', sans-serif;
+    color:var(--ink);
+    line-height:1.15;
+  }
+  a{color:inherit; text-decoration:none;}
+  img,svg{display:block; max-width:100%;}
+  .wrap{
+    max-width:1100px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+  :focus-visible{
+    outline:3px solid var(--sky);
+    outline-offset:3px;
+  }
+
+  /* ---------- background sky texture ---------- */
+  .sky-field{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    overflow:hidden;
+    background:
+      radial-gradient(600px 400px at 85% -5%, rgba(255,138,61,0.16), transparent 60%),
+      radial-gradient(700px 500px at -10% 10%, rgba(47,111,237,0.14), transparent 60%),
+      var(--bg);
+  }
+
+  /* ---------- header ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    backdrop-filter:blur(10px);
+    background:rgba(234,243,251,0.75);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 32px;
+    max-width:1100px; margin:0 auto;
+  }
+  .logo{
+    font-weight:700; font-size:1.15rem; letter-spacing:0.01em;
+    display:flex; align-items:center; gap:8px;
+  }
+  .logo .dot{
+    width:9px; height:9px; border-radius:50%;
+    background:var(--sun);
+  }
+  nav ul{
+    display:flex; gap:28px; list-style:none;
+  }
+  nav ul a{
+    font-size:0.95rem; color:var(--ink-soft); font-weight:500;
+    padding:6px 2px; border-bottom:2px solid transparent;
+    transition:color .2s, border-color .2s;
+  }
+  nav ul a:hover{ color:var(--ink); border-color:var(--sun); }
+  .nav-toggle{ display:none; }
+
+  @media (max-width:760px){
+    nav ul{
+      position:fixed; top:64px; right:0; left:0;
+      background:var(--bg-panel);
+      flex-direction:column; gap:0;
+      padding:8px 32px 20px;
+      border-bottom:1px solid var(--line);
+      transform:translateY(-8px);
+      opacity:0; pointer-events:none;
+      transition:opacity .18s, transform .18s;
+    }
+    nav ul.open{ opacity:1; pointer-events:auto; transform:translateY(0); }
+    nav ul a{ padding:12px 0; border-bottom:1px solid var(--line); }
+    .nav-toggle{
+      display:flex; flex-direction:column; gap:5px;
+      background:none; border:none; cursor:pointer; padding:8px;
+    }
+    .nav-toggle span{ width:22px; height:2px; background:var(--ink); border-radius:2px; }
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding:88px 0 60px;
+    display:grid;
+    grid-template-columns:1.15fr 0.85fr;
+    gap:40px;
+    align-items:center;
+  }
+  .eyebrow-line{
+    display:flex; align-items:center; gap:10px;
+    color:var(--ink-soft); font-size:0.95rem; margin-bottom:18px;
+  }
+  .eyebrow-line svg{ width:20px; height:20px; }
+  .hero h1{
+    font-size:clamp(2.3rem, 5vw, 3.4rem);
+    font-weight:700;
+    max-width:11ch;
+  }
+  .hero h1 span{ color:var(--sky); }
+  .hero p.lede{
+    margin-top:20px;
+    color:var(--ink-soft);
+    font-size:1.08rem;
+    max-width:46ch;
+  }
+  .hero-actions{
+    margin-top:32px;
+    display:flex; gap:14px; flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:13px 24px;
+    border-radius:100px;
+    font-weight:600; font-size:0.96rem;
+    transition:transform .18s, box-shadow .18s, background .18s;
+  }
+  .btn-solid{
+    background:var(--ink); color:#fff;
+  }
+  .btn-solid:hover{ transform:translateY(-2px); box-shadow:0 10px 24px rgba(18,35,63,0.22); }
+  .btn-ghost{
+    border:1.5px solid var(--line); color:var(--ink);
+  }
+  .btn-ghost:hover{ border-color:var(--sky); color:var(--sky); }
+
+  /* hero visual: weather-card mockup */
+  .hero-visual{
+    position:relative;
+    display:flex; justify-content:center;
+  }
+  .weather-card{
+    width:260px;
+    border-radius:28px;
+    padding:20px;
+    background:
+      radial-gradient(60px 60px at 78% 14%, rgba(255,224,150,0.85), rgba(255,224,150,0) 70%),
+      linear-gradient(180deg,#3B7CE0 0%,#4E8FE0 42%,#2C6B57 78%,#245945 100%);
+    box-shadow:0 30px 60px -20px rgba(18,35,63,0.45);
+    color:#fff;
+    position:relative;
+    overflow:hidden;
+  }
+  .wc-app{ display:flex; align-items:center; gap:6px; font-family:'Sora',sans-serif; font-weight:700; font-size:0.82rem; }
+  .wc-app .dot{ width:16px; height:16px; border-radius:6px; background:#fff; opacity:0.9; }
+  .wc-tag{
+    margin-left:auto; background:rgba(255,255,255,0.16);
+    font-size:0.58rem; font-weight:600; padding:3px 8px; border-radius:100px;
+  }
+  .wc-search{
+    margin-top:14px; background:rgba(255,255,255,0.18);
+    border-radius:100px; padding:8px 12px;
+    font-size:0.68rem; opacity:0.85;
+  }
+  .wc-location{
+    margin-top:16px; font-size:0.8rem; font-weight:600;
+    display:flex; align-items:center; gap:6px;
+  }
+  .wc-greeting{ font-size:0.66rem; opacity:0.7; margin-top:3px; }
+  .wc-condrow{ display:flex; justify-content:space-between; align-items:flex-end; margin-top:16px; }
+  .wc-cond{ font-size:0.78rem; font-weight:600; }
+  .wc-cond span{ display:block; font-size:0.64rem; font-weight:400; opacity:0.7; margin-top:3px; }
+  .wc-temp-block{ text-align:right; }
+  .wc-sun{ width:34px; height:34px; margin-left:auto; }
+  .wc-temp{ font-family:'Sora',sans-serif; font-size:2.1rem; font-weight:700; margin-top:2px; }
+  .wc-stats{
+    display:flex; justify-content:space-between;
+    margin-top:18px; padding-top:14px;
+    border-top:1px solid rgba(255,255,255,0.18);
+  }
+  .wc-stats div{ text-align:center; font-size:0.58rem; opacity:0.85; }
+  .wc-stats div b{ display:block; font-size:0.7rem; font-weight:600; margin-top:3px; }
+  .weather-card.wc-large{ width:320px; padding:26px; }
+  .weather-card.wc-large .wc-temp{ font-size:2.6rem; }
+  .weather-card.wc-large .wc-cond{ font-size:0.88rem; }
+
+  .float-chip{
+    position:absolute;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:100px;
+    padding:8px 16px;
+    font-size:0.82rem; font-weight:600;
+    box-shadow:0 12px 24px rgba(18,35,63,0.1);
+    display:flex; align-items:center; gap:8px;
+  }
+  .float-chip .swatch{ width:8px; height:8px; border-radius:50%; }
+  .chip-1{ top:-6px; left:-18px; }
+  .chip-2{ bottom:40px; right:-30px; }
+  @media (max-width:900px){
+    .hero{ grid-template-columns:1fr; }
+    .hero-visual{ margin-top:20px; }
+    .float-chip{ display:none; }
+  }
+
+  section{ padding:76px 0; }
+  .section-head{ margin-bottom:44px; max-width:56ch; }
+  .section-head h2{ font-size:clamp(1.6rem,3vw,2.1rem); }
+  .section-head p{ color:var(--ink-soft); margin-top:10px; }
+
+  /* ---------- about ---------- */
+  .about-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:start;
+  }
+  .about-grid p{ color:var(--ink-soft); margin-bottom:14px; }
+  .stat-row{
+    display:flex; gap:32px; margin-top:8px; flex-wrap:wrap;
+  }
+  .stat{ padding-right:32px; border-right:1px solid var(--line); }
+  .stat:last-child{ border-right:none; }
+  .stat b{
+    font-family:'Sora', sans-serif; font-size:1.7rem; display:block; color:var(--ink);
+  }
+  .stat span{ color:var(--ink-soft); font-size:0.86rem; }
+
+  .avatar-badge{
+    display:flex; align-items:center; gap:18px;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px;
+  }
+  .avatar-badge svg{ width:74px; height:74px; flex-shrink:0; }
+  .avatar-badge b{ display:block; font-family:'Sora',sans-serif; font-size:1.05rem; }
+  .avatar-badge span{ color:var(--ink-soft); font-size:0.88rem; }
+
+  /* ---------- skills ---------- */
+  .skills-flow{
+    display:flex; flex-wrap:wrap; gap:12px;
+  }
+  .skill-pill{
+    display:flex; align-items:center; gap:10px;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    padding:12px 20px;
+    border-radius:100px;
+    font-weight:600; font-size:0.94rem;
+  }
+  .skill-pill .swatch{ width:9px; height:9px; border-radius:50%; }
+
+  /* ---------- project ---------- */
+  .project-panel{
+    display:grid; grid-template-columns:0.9fr 1.1fr;
+    gap:52px; align-items:center;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:44px;
+  }
+  .project-panel h3{ font-size:1.5rem; }
+  .project-panel .role{ color:var(--sky); font-weight:600; font-size:0.9rem; margin-bottom:10px; display:block; }
+  .project-panel p{ color:var(--ink-soft); margin:16px 0 22px; }
+  .tag-row{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:24px; }
+  .tag{
+    font-size:0.8rem; font-weight:600; color:var(--ink-soft);
+    border:1px solid var(--line); padding:6px 14px; border-radius:100px;
+  }
+  @media (max-width:800px){
+    .project-panel{ grid-template-columns:1fr; padding:30px; }
+  }
+
+  /* ---------- education timeline ---------- */
+  .timeline{
+    position:relative;
+    padding-left:28px;
+    border-left:2px solid var(--line);
+  }
+  .tl-item{ position:relative; padding-bottom:38px; }
+  .tl-item:last-child{ padding-bottom:0; }
+  .tl-item::before{
+    content:'';
+    position:absolute; left:-34px; top:4px;
+    width:11px; height:11px; border-radius:50%;
+    background:var(--sun);
+    border:3px solid var(--bg);
+  }
+  .tl-item .tl-year{ color:var(--ink-soft); font-size:0.85rem; font-weight:600; }
+  .tl-item h3{ font-size:1.15rem; margin:4px 0 6px; }
+  .tl-item p{ color:var(--ink-soft); font-size:0.95rem; max-width:52ch; }
+
+  /* ---------- contact ---------- */
+  .contact-panel{
+    background:linear-gradient(135deg,#12233F,#1B4C86);
+    border-radius:28px;
+    padding:56px 44px;
+    color:#fff;
+    text-align:center;
+  }
+  .contact-panel h2{ color:#fff; font-size:clamp(1.6rem,3vw,2.2rem); }
+  .contact-panel p{ color:rgba(255,255,255,0.75); margin:14px auto 30px; max-width:46ch; }
+  .contact-email{
+    font-family:'Sora', sans-serif;
+    font-size:clamp(1.2rem,3vw,1.6rem);
+    font-weight:600;
+    display:inline-block;
+    border-bottom:2px solid var(--sun);
+    padding-bottom:4px;
+  }
+  .social-row{
+    display:flex; justify-content:center; gap:16px; margin-top:30px;
+  }
+  .social-row a{
+    width:44px; height:44px; border-radius:50%;
+    border:1.5px solid rgba(255,255,255,0.3);
+    display:flex; align-items:center; justify-content:center;
+    transition:background .2s, border-color .2s;
+  }
+  .social-row a:hover{ background:rgba(255,255,255,0.12); border-color:#fff; }
+  .social-row svg{ width:18px; height:18px; stroke:#fff; }
+
+  footer{
+    text-align:center; padding:36px 0 48px;
+    color:var(--ink-soft); font-size:0.86rem;
+  }
+</style>
+</head>
+<body>
+
+<div class="sky-field"></div>
+
+<header>
+  <div class="nav">
+    <div class="logo"><span class="dot"></span> Sadia Hameed</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <ul id="navMenu">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#project">Project</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <div>
+      <div class="eyebrow-line">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" stroke="#FF8A3D" stroke-width="1.6"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="#FF8A3D" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Mobile App Developer in progress
+      </div>
+      <h1>Building apps that feel as clear as a <span>sunny forecast.</span></h1>
+      <p class="lede">I'm Sadia Hameed, a BS Information Technology student building my first real Flutter apps — with Firebase auth, live data, and a lot of trial and error along the way.</p>
+      <div class="hero-actions">
+        <a href="https://elegant-mermaid-7b88b7.netlify.app" class="btn btn-solid" target="_blank" rel="noopener">See my project</a>
+        <a href="https://elegant-mermaid-7b88b7.netlify.app" class="btn btn-ghost" target="_blank" rel="noopener">Get in touch</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="float-chip chip-1"><span class="swatch" style="background:#2F6FED"></span>Flutter</div>
+      <div class="float-chip chip-2"><span class="swatch" style="background:#FF8A3D"></span>Firebase Auth</div>
+      <div class="weather-card">
+        <div class="wc-app"><span class="dot"></span>Aether Weather<span class="wc-tag">Live weather, anywhere.</span></div>
+        <div class="wc-search">🔍 Search for a city</div>
+        <div class="wc-location">📍 Current Location</div>
+        <div class="wc-greeting">Good afternoon · Sep 7, 2026</div>
+        <div class="wc-condrow">
+          <div class="wc-cond">Clear sky<span>Feels like 37°C</span></div>
+          <div class="wc-temp-block">
+            <svg class="wc-sun" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="16" fill="#FFC24D"/></svg>
+            <div class="wc-temp">32°C</div>
+          </div>
+        </div>
+        <div class="wc-stats">
+          <div>💧<b>55%</b>Humidity</div>
+          <div>💨<b>5.0 m/s</b>Wind</div>
+          <div>📊<b>948 hPa</b>Pressure</div>
+          <div>👁<b>10.3 km</b>Visibility</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="wrap">
+    <div class="section-head">
+      <h2>About me</h2>
+      <p>The short version of where I'm at right now.</p>
+    </div>
+    <div class="about-grid">
+      <div>
+        <p>I'm currently in my 7th semester of BS Information Technology at the University of the Punjab. Alongside my degree, I've been learning mobile app development through Bano Qabil's BQ2.0 program, focused on Flutter and Dart.</p>
+        <p>My course project is a weather app — the first time I put authentication, live data, and a real UI together into one working app. It's a small project, but it's mine end to end.</p>
+        <div class="stat-row">
+          <div class="stat"><b>7th</b><span>Semester, Punjab Uni</span></div>
+          <div class="stat"><b>BQ2.0</b><span>Bano Qabil program</span></div>
+          <div class="stat"><b>1</b><span>App shipped</span></div>
+        </div>
+      </div>
+      <div class="avatar-badge">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="50" fill="#DCEBFB"/>
+          <path d="M50 20c-14 0-22 11-22 24 0 8 3 13 6 17-2 2-4 6-4 11 0 10 9 15 20 15s20-5 20-15c0-5-2-9-4-11 3-4 6-9 6-17 0-13-8-24-22-24Z" fill="#12233F"/>
+          <ellipse cx="50" cy="58" rx="16" ry="18" fill="#F3C9A6"/>
+          <path d="M34 52c0-11 7-19 16-19s16 8 16 19c-6-3-11-3-16-3s-10 0-16 3Z" fill="#12233F"/>
+          <circle cx="43" cy="58" r="2.4" fill="#12233F"/>
+          <circle cx="57" cy="58" r="2.4" fill="#12233F"/>
+          <path d="M45 66c2 2 8 2 10 0" stroke="#12233F" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+        </svg>
+        <div>
+          <b>Sadia Hameed</b>
+          <span>BS IT student · Flutter learner</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills" class="wrap">
+    <div class="section-head">
+      <h2>What I've been learning</h2>
+      <p>Tools and concepts from the BQ2.0 mobile app track so far.</p>
+    </div>
+    <div class="skills-flow">
+      <div class="skill-pill"><span class="swatch" style="background:#2F6FED"></span>Flutter</div>
+      <div class="skill-pill"><span class="swatch" style="background:#12A996"></span>Dart</div>
+      <div class="skill-pill"><span class="swatch" style="background:#FF8A3D"></span>Firebase</div>
+      <div class="skill-pill"><span class="swatch" style="background:#12233F"></span>Authentication</div>
+      <div class="skill-pill"><span class="swatch" style="background:#4A5C7A"></span>Git & GitHub</div>
+    </div>
+  </section>
+
+  <section id="project" class="wrap">
+    <div class="section-head">
+      <h2>Featured project</h2>
+      <p>My BQ2.0 final project.</p>
+    </div>
+    <div class="project-panel">
+      <div class="weather-card wc-large">
+        <div class="wc-app"><span class="dot"></span>Aether Weather<span class="wc-tag">Live weather, anywhere.</span></div>
+        <div class="wc-search">🔍 Search for a city — e.g. Lahore, London</div>
+        <div class="wc-location">📍 Current Location</div>
+        <div class="wc-greeting">Good afternoon · September 7, 2026</div>
+        <div class="wc-condrow">
+          <div class="wc-cond">Clear sky<span>Feels like 37°C</span></div>
+          <div class="wc-temp-block">
+            <svg class="wc-sun" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="16" fill="#FFC24D"/></svg>
+            <div class="wc-temp">32°C</div>
+          </div>
+        </div>
+        <div class="wc-stats">
+          <div>💧<b>55%</b>Humidity</div>
+          <div>💨<b>5.0 m/s</b>Wind</div>
+          <div>📊<b>948.5 hPa</b>Pressure</div>
+          <div>👁<b>10.3 km</b>Visibility</div>
+        </div>
+      </div>
+      <div>
+        <span class="role">Final Project · BQ2.0 Mobile App Development</span>
+        <h3>Weather App</h3>
+        <p>A Flutter weather app built as my BQ2.0 final project, with Firebase authentication and a clean, simple interface for checking current conditions and short-term forecasts.</p>
+        <div class="tag-row">
+          <span class="tag">Flutter</span>
+          <span class="tag">Dart</span>
+          <span class="tag">Firebase Auth</span>
+        </div>
+        <a href="https://elegant-mermaid-7b88b7.netlify.app" class="btn btn-ghost" target="_blank" rel="noopener">View Live Project</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="education" class="wrap">
+    <div class="section-head">
+      <h2>Education</h2>
+      <p>Where this is all happening.</p>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-year">In progress</div>
+        <h3>BS Information Technology — 7th Semester</h3>
+        <p>University of the Punjab</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">In progress</div>
+        <h3>Mobile App Development — BQ2.0</h3>
+        <p>Bano Qabil · Learning Flutter & Dart, built a weather app as the final project.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="wrap">
+    <div class="contact-panel">
+      <h2>Let's talk</h2>
+      <p>Open to internships, collaborations, or just a chat about Flutter.</p>
+      <a class="contact-email" href="mailto:sh2525921@gmail.com">sh2525921@gmail.com</a>
+      <div class="social-row">
+        <a href="https://www.linkedin.com/in/sadia-hameed-123126421" aria-label="LinkedIn" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 9h3v11H4zM5.5 4a1.8 1.8 0 1 1 0 3.6A1.8 1.8 0 0 1 5.5 4ZM11 9h3v1.7c.6-1 1.7-1.9 3.4-1.9 3 0 3.6 1.9 3.6 4.5V20h-3v-5.9c0-1.4 0-3.2-2-3.2s-2.3 1.5-2.3 3.1V20h-3Z"/></svg>
+        </a>
+        <a href="mailto:sh2525921@gmail.com" aria-label="Email">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>© 2026 Sadia Hameed. Built while learning Flutter, one widget at a time.</footer>
+
+<script>
+  const toggle = document.getElementById('navToggle');
+  const menu = document.getElementById('navMenu');
+  toggle.addEventListener('click', () => {
+    const open = menu.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open);
+  });
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    menu.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+  }));
+</script>
+
+</body>
+</html>
